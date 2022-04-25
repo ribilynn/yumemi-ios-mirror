@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -20,13 +20,13 @@
 		502BACAE243209EA0019B403 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 502BACAC243209EA0019B403 /* LaunchScreen.storyboard */; };
 		502BACB9243209EA0019B403 /* ExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502BACB8243209EA0019B403 /* ExampleTests.swift */; };
 		502BACC4243209EA0019B403 /* ExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502BACC3243209EA0019B403 /* ExampleUITests.swift */; };
-		502BACD92432108F0019B403 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502BACD82432108F0019B403 /* R.generated.swift */; };
 		50594A98244D5F480002184A /* WeatherError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50594A97244D5F480002184A /* WeatherError.swift */; };
 		50C438562432EB43008269CF /* Rswift in Frameworks */ = {isa = PBXBuildFile; productRef = 50C438552432EB43008269CF /* Rswift */; };
 		50C4385E24330B28008269CF /* ostrich-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50C4385D24330B28008269CF /* ostrich-regular.ttf */; };
 		50C4386324335AB8008269CF /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C4386224335AB8008269CF /* Request.swift */; };
 		50C4386524335ACD008269CF /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C4386424335ACD008269CF /* Response.swift */; };
 		50C4386B24341273008269CF /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C4386A24341273008269CF /* WeatherModel.swift */; };
+		CE36EDCC28168C8E00350657 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE36EDCB28168C8E00350657 /* R.generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,12 +65,12 @@
 		502BACBF243209EA0019B403 /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		502BACC3243209EA0019B403 /* ExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleUITests.swift; sourceTree = "<group>"; };
 		502BACC5243209EA0019B403 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		502BACD82432108F0019B403 /* R.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
 		50594A97244D5F480002184A /* WeatherError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherError.swift; sourceTree = "<group>"; };
 		50C4385D24330B28008269CF /* ostrich-regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ostrich-regular.ttf"; sourceTree = "<group>"; };
 		50C4386224335AB8008269CF /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		50C4386424335ACD008269CF /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		50C4386A24341273008269CF /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
+		CE36EDCB28168C8E00350657 /* R.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +160,7 @@
 		502BACA0243209E90019B403 /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				CE36EDCB28168C8E00350657 /* R.generated.swift */,
 				502BACA1243209E90019B403 /* AppDelegate.swift */,
 				502BACA3243209E90019B403 /* SceneDelegate.swift */,
 				501DEBBF2433584E0015FB44 /* UI */,
@@ -168,7 +169,6 @@
 				502BACAA243209EA0019B403 /* Assets.xcassets */,
 				502BACAC243209EA0019B403 /* LaunchScreen.storyboard */,
 				502BACAF243209EA0019B403 /* Info.plist */,
-				502BACD82432108F0019B403 /* R.generated.swift */,
 				50C4385D24330B28008269CF /* ostrich-regular.ttf */,
 			);
 			path = Example;
@@ -341,6 +341,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		502BACD7243210190019B403 /* R.swift */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -357,7 +358,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if mint list | grep -q 'R.swift'; then\n  xcrun --sdk macosx mint run R.swift rswift generate \"$SRCROOT/$PRODUCT_NAME/R.generated.swift\"\nelse\n  echo \"error: R.swift not installed; run 'mint bootstrap' to install\"\n  return -1\nfi\n";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\n\nif mint list | grep -q 'R.swift'; then\n  xcrun --sdk macosx mint run R.swift rswift generate \"$SRCROOT/$PRODUCT_NAME/R.generated.swift\"\nelse\n  echo \"error: R.swift not installed; run 'mint bootstrap' to install\"\n  return -1\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -374,8 +375,8 @@
 				502BACA2243209E90019B403 /* AppDelegate.swift in Sources */,
 				50594A98244D5F480002184A /* WeatherError.swift in Sources */,
 				502BACA4243209E90019B403 /* SceneDelegate.swift in Sources */,
-				502BACD92432108F0019B403 /* R.generated.swift in Sources */,
 				50C4386324335AB8008269CF /* Request.swift in Sources */,
+				CE36EDCC28168C8E00350657 /* R.generated.swift in Sources */,
 				501DEBC52433598E0015FB44 /* Weather.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
