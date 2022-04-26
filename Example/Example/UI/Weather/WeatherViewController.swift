@@ -56,6 +56,7 @@ class WeatherViewController: UIViewController {
                 self?.handleWeather(result: result)
             }
         }
+        disasterModel.requestDisaster()
     }
     
     func handleWeather(result: Result<Response, WeatherError>) {
