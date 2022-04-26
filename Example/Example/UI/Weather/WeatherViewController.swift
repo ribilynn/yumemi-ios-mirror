@@ -13,13 +13,19 @@ protocol WeatherModel {
 }
 
 protocol DisasterModel {
-    func fetchDisaster(completion: ((String) -> Void)?)
+    var delegate: DisasterModelDelegate? { get set }
+    func requestDisaster()
 }
 
 class WeatherViewController: UIViewController {
     
     var weatherModel: WeatherModel!
-    var disasterModel: DisasterModel!
+    var disasterModel: DisasterModel! {
+        didSet {
+            disasterModel.delegate = self
+        }
+    }
+    
     @IBOutlet weak var weatherImageView: UIImageView!
     @IBOutlet weak var minTempLabel: UILabel!
     @IBOutlet weak var maxTempLabel: UILabel!
@@ -50,9 +56,6 @@ class WeatherViewController: UIViewController {
                 self?.handleWeather(result: result)
             }
         }
-        disasterModel.fetchDisaster { [weak self] disaster in
-            self?.disasterLabel.text = disaster
-        }
     }
     
     func handleWeather(result: Result<Response, WeatherError>) {
@@ -81,6 +84,12 @@ class WeatherViewController: UIViewController {
             })
             self.present(alertController, animated: true, completion: nil)
         }
+    }
+}
+
+extension WeatherViewController: DisasterModelDelegate {
+    func handle(disaster: String) {
+        disasterLabel.text = disaster
     }
 }
 

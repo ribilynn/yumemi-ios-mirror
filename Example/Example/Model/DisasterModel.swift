@@ -9,26 +9,26 @@
 import Foundation
 import YumemiWeather
 
+protocol DisasterModelDelegate: AnyObject {
+    func handle(disaster: String)
+}
+
 class DisasterModelImpl: DisasterModel {
-        
     private let yumemiDisaster: YumemiDisaster
-    private var fetchDisasterHandler: ((String) -> Void)?
+    weak var delegate: DisasterModelDelegate?
     
     init(yumemiDisaster: YumemiDisaster = YumemiDisaster()) {
         self.yumemiDisaster = yumemiDisaster
         self.yumemiDisaster.delegate = self
     }
 
-    func fetchDisaster(completion: ((String) -> Void)?) {
-        self.fetchDisasterHandler = completion
-        self.yumemiDisaster.fetchDisaster()
+    func requestDisaster() {
+        yumemiDisaster.fetchDisaster()
     }
 }
 
 extension DisasterModelImpl: YumemiDisasterHandleDelegate {
-    
     func handle(disaster: String) {
-        self.fetchDisasterHandler?(disaster)
+        delegate?.handle(disaster: disaster)
     }
-    
 }
