@@ -30,43 +30,70 @@ class WeatherViewControllerTests: XCTestCase {
     
     /// 天気予報がsunnyだったらImageViewのImageにsunnyが設定されること_TintColorがredに設定されること
     func testSunnyImageInWeatherViewController() throws {
+        let expectation = expectation(description: "Loading Weather")
         weahterModel.fetchWeatherImpl = { _, _ in
-            Response(weather: .sunny, maxTemp: 0, minTemp: 0, date: Date())
+            defer {
+                DispatchQueue.main.async {
+                    expectation.fulfill()
+                }
+            }
+            return Response(weather: .sunny, maxTemp: 0, minTemp: 0, date: Date())
         }
-        
         weahterViewController.loadWeather(nil)
+        wait(for: [expectation], timeout: 5)
+        
         XCTAssertEqual(weahterViewController.weatherImageView.tintColor, R.color.red())
         XCTAssertEqual(weahterViewController.weatherImageView.image, R.image.sunny())
     }
     
     /// 天気予報がcloudyだったらImageViewのImageにcloudyが設定されること_TintColorがgrayに設定されること
     func testCloudyImageInWeatherViewController() throws {
+        let expectation = expectation(description: "Loading Weather")
         weahterModel.fetchWeatherImpl = { _, _ in
-            Response(weather: .cloudy, maxTemp: 0, minTemp: 0, date: Date())
+            defer {
+                DispatchQueue.main.async {
+                    expectation.fulfill()
+                }
+            }
+            return Response(weather: .cloudy, maxTemp: 0, minTemp: 0, date: Date())
         }
-        
         weahterViewController.loadWeather(nil)
+        wait(for: [expectation], timeout: 5)
+        
         XCTAssertEqual(weahterViewController.weatherImageView.tintColor, R.color.gray())
         XCTAssertEqual(weahterViewController.weatherImageView.image, R.image.cloudy())
     }
     
     /// 天気予報がrainyだったらImageViewのImageにrainyが設定されること_TintColorがblueに設定されること
     func testrainyImageInWeatherViewController() throws {
+        let expectation = expectation(description: "Loading Weather")
         weahterModel.fetchWeatherImpl = { _, _ in
-            Response(weather: .rainy, maxTemp: 0, minTemp: 0, date: Date())
+            defer {
+                DispatchQueue.main.async {
+                    expectation.fulfill()
+                }
+            }
+            return Response(weather: .rainy, maxTemp: 0, minTemp: 0, date: Date())
         }
-        
         weahterViewController.loadWeather(nil)
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(weahterViewController.weatherImageView.tintColor, R.color.blue())
         XCTAssertEqual(weahterViewController.weatherImageView.image, R.image.rainy())
     }
     
-    func test_最高気温_最低気温がUILabelに設定されること() throws {
+    /// 最高気温_最低気温がUILabelに設定されること
+    func testTemperatureLabel() throws {
+        let expectation = expectation(description: "Loading Weather")
         weahterModel.fetchWeatherImpl = { _, _ in
-            Response(weather: .rainy, maxTemp: 100, minTemp: -100, date: Date())
+            defer {
+                DispatchQueue.main.async {
+                    expectation.fulfill()
+                }
+            }
+            return Response(weather: .rainy, maxTemp: 100, minTemp: -100, date: Date())
         }
-        
         weahterViewController.loadWeather(nil)
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(weahterViewController.minTempLabel.text, "-100")
         XCTAssertEqual(weahterViewController.maxTempLabel.text, "100")
     }
