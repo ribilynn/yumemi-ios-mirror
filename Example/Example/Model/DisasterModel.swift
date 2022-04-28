@@ -6,6 +6,7 @@
 //  Copyright © 2020 YUMEMI Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 import YumemiWeather
 
@@ -14,7 +15,9 @@ protocol DisasterModelDelegate: AnyObject {
 }
 
 class DisasterModelImpl: DisasterModel {
+    
     private let yumemiDisaster: YumemiDisaster
+    var isLoading = CurrentValueSubject<Bool, Never>(false)
     weak var delegate: DisasterModelDelegate?
     
     init(yumemiDisaster: YumemiDisaster = YumemiDisaster()) {
@@ -23,6 +26,7 @@ class DisasterModelImpl: DisasterModel {
     }
 
     func requestDisaster() {
+        isLoading.send(true)
         yumemiDisaster.fetchDisaster()
     }
 }
@@ -30,5 +34,6 @@ class DisasterModelImpl: DisasterModel {
 extension DisasterModelImpl: YumemiDisasterHandleDelegate {
     func handle(disaster: String) {
         delegate?.handle(disaster: disaster)
+        isLoading.send(false)
     }
 }

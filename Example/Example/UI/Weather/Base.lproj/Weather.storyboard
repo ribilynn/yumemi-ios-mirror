@@ -109,6 +109,7 @@
                         <outlet property="disasterLabel" destination="gRh-8C-I1Q" id="jKC-ck-gXL"/>
                         <outlet property="maxTempLabel" destination="ESI-gU-cW3" id="x4x-ay-9m5"/>
                         <outlet property="minTempLabel" destination="p5C-3W-aox" id="PV8-jV-uaE"/>
+                        <outlet property="reloadButton" destination="ERe-3f-sA4" id="Bg6-zE-LzT"/>
                         <outlet property="weatherImageView" destination="Xc1-d9-3e0" id="mAr-OB-AEZ"/>
                     </connections>
                 </viewController>

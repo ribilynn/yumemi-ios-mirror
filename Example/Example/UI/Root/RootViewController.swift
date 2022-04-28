@@ -17,8 +17,7 @@ class RootViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let viewController = R.storyboard.weather.instantiateInitialViewController()!
-        viewController.weatherModel = WeatherModelImpl()
-        viewController.disasterModel = DisasterModelImpl()
+        viewController.setModels(weatherModel: WeatherModelImpl(), disasterModel: DisasterModelImpl())
         viewController.modalPresentationStyle = .fullScreen
         present(viewController, animated: true, completion: nil)
     }
