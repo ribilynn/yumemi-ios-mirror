@@ -299,7 +299,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if mint list | grep -q 'R.swift'; then\n  xcrun --sdk macosx mint run R.swift rswift generate \"$SRCROOT/$PRODUCT_NAME/R.generated.swift\"\nelse\n  echo \"error: R.swift not installed; run 'mint bootstrap' to install\"\n  return -1\nfi\n";
+			shellScript = "# Export Homebrew path for Apple Silicon\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\n# Check if mint is installed\nwhich -s mint\nif [[ $? != 0 ]] ; then\n    echo \"mint not installed\"\n    echo \"$ brew install mint\"\n    return -1\nfi\n\n# Run R.swift\nif mint list | grep -q 'R.swift'; then\n  xcrun --sdk macosx mint run R.swift rswift generate \"$SRCROOT/$PRODUCT_NAME/R.generated.swift\"\nelse\n  echo \"error: R.swift not installed; run 'mint bootstrap' to install\"\n  return -1\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
