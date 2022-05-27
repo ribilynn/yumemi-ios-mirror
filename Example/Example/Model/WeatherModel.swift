@@ -6,10 +6,13 @@
 //  Copyright © 2020 YUMEMI Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 import YumemiWeather
 
 class WeatherModelImpl: WeatherModel {
+    
+    var isLoading = CurrentValueSubject<Bool, Never>(false)
     
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -40,17 +43,23 @@ class WeatherModelImpl: WeatherModel {
     }
     
     func fetchWeather(at area: String, date: Date, completion: @escaping (Result<Response, WeatherError>) -> Void) {
+        isLoading.send(true)
         let request = Request(area: area, date: date)
-        if let requestJson = try? jsonString(from: request) {
-            DispatchQueue.global().async {
-                if let responseJson = try? YumemiWeather.syncFetchWeather(requestJson) {
-                    if let response = try? self.response(from: responseJson) {
-                        completion(.success(response))
-                    }
-                    else {
-                        completion(.failure(WeatherError.jsonDecodeError))
-                    }
-                }
+        DispatchQueue.global().async { [isLoading] in
+            defer {
+                isLoading.send(false)
+            }
+            do {
+                let requestJson = try self.jsonString(from: request)
+                let responseJson = try YumemiWeather.syncFetchWeather(requestJson)
+                let response = try self.response(from: responseJson)
+                completion(.success(response))
+            } catch is EncodingError {
+                completion(.failure(WeatherError.jsonEncodeError))
+            } catch is DecodingError {
+                completion(.failure(WeatherError.jsonDecodeError))
+            } catch {
+                completion(.failure(WeatherError.unknownError))
             }
         }
     }

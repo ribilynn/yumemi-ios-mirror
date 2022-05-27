@@ -6,31 +6,38 @@
 //  Copyright © 2020 YUMEMI Inc. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 protocol WeatherModel {
+    var isLoading: CurrentValueSubject<Bool, Never> { get }
     func fetchWeather(at area: String, date: Date, completion: @escaping (Result<Response, WeatherError>) -> Void)
 }
 
 protocol DisasterModel {
-    func fetchDisaster(completion: ((String) -> Void)?)
+    var isLoading: CurrentValueSubject<Bool, Never> { get }
+    var delegate: DisasterModelDelegate? { get set }
+    func requestDisaster()
 }
 
 class WeatherViewController: UIViewController {
     
-    var weatherModel: WeatherModel!
-    var disasterModel: DisasterModel!
+    private var weatherModel: WeatherModel!
+    private var disasterModel: DisasterModel!
+    private var cancellables: [AnyCancellable] = []
+    
     @IBOutlet weak var weatherImageView: UIImageView!
     @IBOutlet weak var minTempLabel: UILabel!
     @IBOutlet weak var maxTempLabel: UILabel!
     @IBOutlet weak var disasterLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var reloadButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [unowned self] notification in
-            self.loadWeather(notification.object)
+        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [weak self] notification in
+            self?.loadWeather(notification.object)
         }
     }
     
@@ -42,16 +49,38 @@ class WeatherViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    func setModels(weatherModel: WeatherModel, disasterModel: DisasterModel) {
+        self.weatherModel = weatherModel
+        self.disasterModel = disasterModel
+        self.disasterModel.delegate = self
+        
+        cancellables = []
+        Publishers.Zip(self.weatherModel.isLoading, self.disasterModel.isLoading)
+            .map { $0 || $1 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                self?.setLoadingState(isLoading)
+            }
+            .store(in: &cancellables)
+    }
+    
     @IBAction func loadWeather(_ sender: Any?) {
-        self.activityIndicator.startAnimating()
-        weatherModel.fetchWeather(at: "tokyo", date: Date()) { result in
+        disasterModel.requestDisaster()
+        weatherModel.fetchWeather(at: "tokyo", date: Date()) { [weak self] result in
             DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.handleWeather(result: result)
+                self?.handleWeather(result: result)
             }
         }
-        disasterModel.fetchDisaster { (disaster) in
-            self.disasterLabel.text = disaster
+    }
+    
+    private func setLoadingState(_ isLoading: Bool) {
+        guard self.isViewLoaded else { return }
+        if isLoading {
+            reloadButton.isEnabled = false
+            activityIndicator.startAnimating()
+        } else {
+            reloadButton.isEnabled = true
+            activityIndicator.stopAnimating()
         }
     }
     
@@ -81,6 +110,12 @@ class WeatherViewController: UIViewController {
             })
             self.present(alertController, animated: true, completion: nil)
         }
+    }
+}
+
+extension WeatherViewController: DisasterModelDelegate {
+    func handle(disaster: String) {
+        disasterLabel.text = disaster
     }
 }
 
